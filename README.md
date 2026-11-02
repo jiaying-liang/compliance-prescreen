@@ -2,7 +2,7 @@
 
 面向社交平台商业内容的发布前合规预审工具。覆盖 11 个法域、61 条规则，全部条款均经官方法规数据库核对。
 
-**在线使用**：（部署后把 GitHub Pages 网址填在这里）
+**在线使用**：https://jiaying-liang.github.io/compliance-prescreen/
 
 ---
 
