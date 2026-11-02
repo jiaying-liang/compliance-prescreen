@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>内容合规预审 · 商业内容发布前风险审查</title>
+<style>
+:root{
+  --ink:#16202B;
+  --ink2:#4A5763;
+  --ink3:#7C8794;
+  --line:#D5D9DE;
+  --line2:#E7EAED;
+  --field:#E8EAEE;
+  --paper:#FFFFFF;
+  --red:#9E2A1E;
+  --redbg:#F7E6E3;
+  --amber:#866013;
+  --amberbg:#F8EFD9;
+  --ok:#2B6246;
+  --serif:"Songti SC","SimSun","Noto Serif CJK SC",Georgia,"Times New Roman",serif;
+  --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--field);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+
+/* ---------- header ---------- */
+header{background:var(--ink);color:#fff}
+.hbar{display:flex;align-items:center;gap:28px;height:64px}
+.brand{font-family:var(--serif);font-size:20px;letter-spacing:.06em;white-space:nowrap}
+.brand span{color:#9FB0BE;font-size:13px;letter-spacing:.14em;margin-left:10px;font-family:var(--sans)}
+nav{display:flex;gap:4px;margin-left:auto}
+nav button{
+  background:none;border:0;color:#9FB0BE;font-family:var(--sans);font-size:15px;
+  padding:7px 14px;border-radius:3px;cursor:pointer;
+}
+nav button:hover{color:#fff}
+nav button[aria-current="true"]{background:rgba(255,255,255,.12);color:#fff}
+nav button:focus-visible,.seg button:focus-visible,.btn:focus-visible,
+select:focus-visible,textarea:focus-visible,input:focus-visible,
+.mk:focus-visible,.sw:focus-visible{outline:2px solid #4E8CA8;outline-offset:2px}
+
+.jbar{border-top:1px solid rgba(255,255,255,.14);display:flex;align-items:center;gap:16px;height:52px}
+.jlabel{font-size:13px;color:#9FB0BE;letter-spacing:.08em}
+.seg{display:flex;border:1px solid rgba(255,255,255,.26);border-radius:3px;overflow:hidden}
+.seg button{
+  background:none;border:0;color:#C6D1DA;font-family:var(--sans);font-size:14px;
+  padding:6px 20px;cursor:pointer;
+}
+.seg button+button{border-left:1px solid rgba(255,255,255,.26)}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--ink)}
+#seg{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.3);font-size:14px;padding:6px 12px;border-radius:3px}
+#seg option,#seg optgroup{background:#16202B;color:#fff}
+.jnote{font-size:13px;color:#8D9BA8;margin-left:auto;text-align:right;max-width:52%}
+.conf{font-size:11px;border-radius:2px;padding:1px 6px;margin-left:6px;white-space:nowrap}
+.conf.high{background:#E2EFE8;color:var(--ok)}
+.conf.mid{background:#EDEFF1;color:var(--ink3)}
+.conf.check{background:var(--amberbg);color:var(--amber)}
+.notes .conf{margin-left:0}
+
+main{padding:36px 0 72px}
+.view[hidden]{display:none}
+
+/* ---------- editor ---------- */
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:4px}
+.card>h2{
+  font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ink2);
+  margin:0;padding:14px 22px;border-bottom:1px solid var(--line2);letter-spacing:.04em;
+}
+.pad{padding:22px}
+
+textarea{
+  width:100%;min-height:168px;resize:vertical;
+  font-family:var(--serif);font-size:17px;line-height:1.95;color:var(--ink);
+  border:1px solid var(--line);border-radius:3px;padding:16px 18px;background:#FCFCFD;
+}
+textarea::placeholder{color:var(--ink3);font-family:var(--sans);font-size:15px}
+
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin-top:18px}
+.ctl{display:flex;align-items:center;gap:9px;font-size:14px;color:var(--ink2)}
+select{
+  font-family:var(--sans);font-size:14px;color:var(--ink);background:#fff;
+  border:1px solid var(--line);border-radius:3px;padding:6px 10px;
+}
+.sw{
+  position:relative;width:40px;height:22px;border-radius:11px;background:#C8CDD3;
+  border:0;cursor:pointer;transition:background .15s;flex:none;
+}
+.sw::after{
+  content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;
+  background:#fff;transition:transform .15s;
+}
+.sw[aria-checked="true"]{background:var(--ink)}
+.sw[aria-checked="true"]::after{transform:translateX(18px)}
+
+.actions{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
+.btn{
+  font-family:var(--sans);font-size:15px;border-radius:3px;padding:11px 24px;
+  cursor:pointer;border:1px solid var(--ink);background:var(--ink);color:#fff;
+}
+.btn:hover{background:#0E1823}
+.btn.ghost{background:#fff;color:var(--ink)}
+.btn.ghost:hover{background:#F2F4F6}
+.btn.quiet{background:#fff;color:var(--ink2);border-color:var(--line)}
+.btn.quiet:hover{border-color:var(--ink3);color:var(--ink)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+
+/* ---------- verdict ---------- */
+.verdict{margin-top:28px}
+.vhead{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;padding:18px 22px;border-bottom:1px solid var(--line2)}
+.vtitle{font-family:var(--serif);font-size:21px}
+.tally{display:flex;gap:20px;font-size:14px;color:var(--ink2)}
+.tally b{font-size:17px;font-family:var(--serif)}
+.tally .r b{color:var(--red)}
+.tally .a b{color:var(--amber)}
+.clear{color:var(--ok);font-size:14px}
+
+.doc{display:grid;grid-template-columns:minmax(0,1fr) 292px;gap:0}
+.docbody{padding:26px 24px 30px;font-family:var(--serif);font-size:17px;line-height:2.15;word-break:break-word}
+.notes{border-left:1px solid var(--line2);padding:22px 20px;background:#FBFBFC}
+
+.mk{
+  border:0;padding:1px 2px;border-radius:2px;font:inherit;cursor:pointer;
+  border-bottom:1px dashed currentColor;background:transparent;
+}
+.mk.r{background:var(--redbg);color:var(--red)}
+.mk.a{background:var(--amberbg);color:var(--amber)}
+.mk sup{font-family:var(--sans);font-size:10px;margin-left:2px;vertical-align:super;font-weight:600}
+.mk.on{box-shadow:0 0 0 2px currentColor}
+
+.note{border-top:1px solid var(--line2);padding:15px 0}
+.notes .note:first-of-type{border-top:0;padding-top:0}
+.note.on{background:#F1F3F5;margin:0 -20px;padding-left:20px;padding-right:20px}
+.nhead{display:flex;gap:8px;align-items:baseline;font-size:14px;font-weight:600}
+.nnum{font-size:11px;color:#fff;background:var(--ink3);border-radius:2px;padding:1px 5px;flex:none;font-weight:600}
+.note.r .nnum{background:var(--red)} .note.r .nhead{color:var(--red)}
+.note.a .nnum{background:var(--amber)} .note.a .nhead{color:var(--amber)}
+.nrow{display:grid;grid-template-columns:58px 1fr;gap:8px;margin-top:7px;font-size:13px;line-height:1.65}
+.nrow dt{color:var(--ink3)}
+.nrow dd{margin:0;color:var(--ink2)}
+.nrow dd.law{font-family:var(--serif);color:var(--ink)}
+.empty{color:var(--ink3);font-size:14px;line-height:1.8}
+
+.cond{margin:0 24px 24px;border:1px solid;border-radius:3px;padding:13px 16px;font-size:14px;line-height:1.7}
+.cond.r{border-color:#E3BDB6;background:var(--redbg);color:var(--red)}
+.cond.a{border-color:#E2CFA0;background:var(--amberbg);color:var(--amber)}
+.cond b{font-weight:600}
+.cond .law{display:block;margin-top:5px;font-family:var(--serif);color:var(--ink2);font-size:13px}
+
+.reveal{animation:rise .32s ease-out both}
+@keyframes rise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.reveal{animation:none}}
+
+/* ---------- side rail ---------- */
+.rail .card+.card{margin-top:20px}
+.rail p{font-size:13.5px;line-height:1.8;color:var(--ink2);margin:0 0 12px}
+.rail p:last-child{margin-bottom:0}
+.samples{display:flex;flex-direction:column;gap:8px}
+.samples button{
+  text-align:left;font-family:var(--sans);font-size:14px;color:var(--ink);
+  background:#F7F8F9;border:1px solid var(--line2);border-radius:3px;padding:10px 13px;cursor:pointer;
+}
+.samples button:hover{border-color:var(--ink3);background:#F1F3F5}
+.samples small{display:block;color:var(--ink3);font-size:12px;margin-top:2px}
+
+/* ---------- board ---------- */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:20px 22px}
+.stat b{display:block;font-family:var(--serif);font-size:34px;line-height:1.15;font-weight:400}
+.stat span{font-size:13px;color:var(--ink3)}
+.stat.r b{color:var(--red)} .stat.a b{color:var(--amber)}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin-top:24px}
+.bar{display:grid;grid-template-columns:1fr 36px;gap:10px;align-items:center;margin-bottom:13px;font-size:14px}
+.bar em{font-style:normal;display:block;margin-bottom:5px;color:var(--ink2)}
+.bar i{display:block;height:7px;border-radius:1px;background:var(--line2)}
+.bar i span{display:block;height:100%;border-radius:1px;background:var(--ink)}
+.bar b{text-align:right;font-family:var(--serif);font-size:16px;font-weight:400}
+.tk{border-top:1px solid var(--line2);padding:15px 0}
+.tk:first-child{border-top:0;padding-top:0}
+.tkh{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.tkid{font-size:12.5px;color:var(--ink3);letter-spacing:.04em}
+.tag{font-size:12px;border-radius:2px;padding:2px 8px;white-space:nowrap}
+.tag.wait{background:var(--amberbg);color:var(--amber)}
+.tag.pass{background:#E2EFE8;color:var(--ok)}
+.tag.deny{background:var(--redbg);color:var(--red)}
+.tkb{font-family:var(--serif);font-size:15.5px;margin:6px 0 8px}
+.tkf{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13px;color:var(--ink3)}
+.tkf div{display:flex;gap:7px}
+.mini{font-family:var(--sans);font-size:13px;border:1px solid var(--line);background:#fff;color:var(--ink2);border-radius:3px;padding:4px 12px;cursor:pointer}
+.mini:hover{border-color:var(--ink3);color:var(--ink)}
+
+/* ---------- rules ---------- */
+.rulehead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.rulehead h2{font-family:var(--serif);font-size:23px;font-weight:400;margin:0}
+.rulehead p{margin:0;font-size:14px;color:var(--ink2)}
+.rlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.rule{background:var(--paper);border:1px solid var(--line);border-left-width:3px;border-radius:4px;padding:18px 20px}
+.rule.r{border-left-color:var(--red)} .rule.a{border-left-color:var(--amber)}
+.rh{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.rh h3{font-size:15.5px;margin:0;font-weight:600}
+.lv{font-size:11.5px;border-radius:2px;padding:1px 7px}
+.rule.r .lv{background:var(--redbg);color:var(--red)}
+.rule.a .lv{background:var(--amberbg);color:var(--amber)}
+.cat{font-size:12.5px;color:var(--ink3);margin-left:auto}
+.rr{display:grid;grid-template-columns:58px 1fr;gap:8px;margin-top:9px;font-size:13px;line-height:1.7}
+.rr dt{color:var(--ink3)} .rr dd{margin:0;color:var(--ink2)}
+.rr dd.law{font-family:var(--serif);color:var(--ink)}
+form.add{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:22px;margin-bottom:22px}
+form.add[hidden]{display:none}
+.frow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:14px}
+label{display:block;font-size:13px;color:var(--ink2);margin-bottom:5px}
+input[type=text]{width:100%;font-family:var(--sans);font-size:14px;border:1px solid var(--line);border-radius:3px;padding:8px 11px;color:var(--ink)}
+
+footer{border-top:1px solid var(--line);margin-top:48px;padding:22px 0 0;font-size:13px;color:var(--ink3);line-height:1.8}
+
+@media (max-width:900px){
+  .grid,.doc,.cols,.rlist,.frow{grid-template-columns:minmax(0,1fr)}
+  .notes{border-left:0;border-top:1px solid var(--line2)}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .hbar{height:auto;padding:14px 0;flex-wrap:wrap;gap:12px}
+  nav{margin-left:0;width:100%}
+  .jbar{height:auto;padding:12px 0;flex-wrap:wrap}
+  .jnote{margin-left:0;text-align:left;width:100%}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="hbar">
+      <div class="brand">内容合规预审<span>PRE-PUBLICATION REVIEW</span></div>
+      <nav>
+        <button data-view="review" aria-current="true">预审</button>
+        <button data-view="board">看板</button>
+        <button data-view="rules">规则库</button>
+      </nav>
+    </div>
+    <div class="jbar">
+      <span class="jlabel">适用法域</span>
+      <select id="seg">
+        <optgroup label="中国">
+          <option value="cn">中国内地</option>
+          <option value="hk">中国香港</option>
+          <option value="mo">中国澳门</option>
+        </optgroup>
+        <optgroup label="欧美">
+          <option value="us">美国</option>
+          <option value="eu">欧盟</option>
+        </optgroup>
+        <optgroup label="东南亚">
+          <option value="my">马来西亚</option>
+          <option value="id">印度尼西亚</option>
+          <option value="th">泰国</option>
+          <option value="vn">越南</option>
+        </optgroup>
+        <optgroup label="东亚">
+          <option value="jp">日本</option>
+          <option value="kr">韩国</option>
+        </optgroup>
+      </select>
+      <span class="jnote" id="jnote"></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ========== 预审 ========== -->
+<section class="view" id="view-review">
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h2>待审内容</h2>
+        <div class="pad">
+          <textarea id="draft" placeholder="粘贴一篇准备发布的商业内容，或从右侧选一个示例。"></textarea>
+          <div class="controls">
+            <div class="ctl">
+              <span>内容品类</span>
+              <select id="cat"></select>
+            </div>
+            <div class="ctl">
+              <button class="sw" id="commercial" role="switch" aria-checked="true" aria-label="含购物链接或品牌合作"></button>
+              <span>含购物链接或品牌合作</span>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn" id="run">预审这篇</button>
+            <button class="btn ghost" id="fix" disabled>套用改写建议</button>
+            <button class="btn quiet" id="reset">清空</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card verdict" id="verdict" hidden>
+        <div class="vhead">
+          <span class="vtitle" id="vtitle"></span>
+          <span class="tally">
+            <span class="r">须修改 <b id="nred">0</b></span>
+            <span class="a">待复核 <b id="namber">0</b></span>
+          </span>
+          <span class="clear" id="clear" hidden>红线项已全部处理</span>
+        </div>
+        <div class="doc">
+          <div class="docbody" id="docbody"></div>
+          <aside class="notes" id="notes"></aside>
+        </div>
+        <div id="conds"></div>
+      </div>
+    </div>
+
+    <div class="rail">
+      <div class="card">
+        <h2>示例内容</h2>
+        <div class="pad samples" id="samples"></div>
+      </div>
+      <div class="card">
+        <h2>这个工具做什么</h2>
+        <div class="pad">
+          <p>把广告与内容合规的法定要求拆成可配置的规则，在内容发布前完成一次风险筛查。</p>
+          <p>确定性违规标红并给出改写；需要结合资质材料才能判断的标黄，转人工复核并生成工单。能自动判断的交给规则，判断不了的交回给人。</p>
+          <p>切换法域后，同一篇内容按另一套规则重新计算。</p>
+          <p>规则库只收录已核对官方法规文本的条款。未能确认条款号的规则一律不收录，宁缺毋滥。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 看板 ========== -->
+<section class="view" id="view-board" hidden>
+  <div class="stats">
+    <div class="stat"><b id="s-total">0</b><span>已预审内容</span></div>
+    <div class="stat r"><b id="s-red">0</b><span>红线拦截</span></div>
+    <div class="stat a"><b id="s-amber">0</b><span>转人工复核</span></div>
+    <div class="stat"><b id="s-auto">—</b><span>自动判定比例</span></div>
+  </div>
+  <div class="cols">
+    <div class="card">
+      <h2>规则命中分布</h2>
+      <div class="pad" id="bars"><p class="empty">还没有数据。回到预审跑一篇内容，这里会记录每条规则被触发的次数。</p></div>
+    </div>
+    <div class="card">
+      <h2>人工复核工单</h2>
+      <div class="pad" id="queue"><p class="empty">队列是空的。标黄的事项会自动进入这里，等待法务判断。</p></div>
+    </div>
+  </div>
+  <div class="actions"><button class="btn quiet" id="seed">载入一批示例数据</button></div>
+</section>
+
+<!-- ========== 规则库 ========== -->
+<section class="view" id="view-rules" hidden>
+  <div class="rulehead">
+    <h2 id="rtitle"></h2>
+    <p id="rcount"></p>
+    <button class="btn ghost" id="toggleAdd" style="margin-left:auto">新增一条规则</button>
+  </div>
+  <form class="add" id="addForm" hidden>
+    <div class="frow">
+      <div><label for="f-name">规则名称</label><input type="text" id="f-name" placeholder="例如：绝对化用语"></div>
+      <div><label for="f-terms">匹配词（逗号分隔）</label><input type="text" id="f-terms" placeholder="最好，第一，顶级"></div>
+    </div>
+    <div class="frow">
+      <div><label for="f-law">法条依据</label><input type="text" id="f-law" placeholder="《中华人民共和国广告法》第九条"></div>
+      <div><label for="f-pen">处罚风险</label><input type="text" id="f-pen" placeholder="责令停止发布，处二十万元以上一百万元以下罚款"></div>
+    </div>
+    <div class="frow">
+      <div><label for="f-advice">改写建议</label><input type="text" id="f-advice" placeholder="改为不含比较级的主观表述"></div>
+      <div><label for="f-level">风险等级</label>
+        <select id="f-level"><option value="red">红 · 确定性违规</option><option value="amber">黄 · 转人工复核</option></select>
+      </div>
+    </div>
+    <div class="actions" style="margin-top:4px">
+      <button class="btn" type="submit">加入规则库</button>
+      <button class="btn quiet" type="button" id="cancelAdd">取消</button>
+    </div>
+  </form>
+  <div class="rlist" id="rlist"></div>
+</section>
+
+<footer class="wrap">
+  本工具输出为合规风险提示，依据公开法律法规整理，不构成法律意见，具体发布决策请结合产品资质材料与专业判断。
+</footer>
+</main>
+
+<script>
+/* ============ 规则库 ============ */
+const CATS = ["通用","美妆护肤","食品饮料","保健食品","医疗美容","母婴","金融理财","教育培训"];
+
+const RULES = [
+/* ================= 中国内地 ================= */
+
+{j:"cn",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"绝对化用语",
+ law:"《中华人民共和国广告法》第九条第三项",
+ pen:"责令停止发布，处二十万元以上一百万元以下罚款；情节严重的吊销营业执照（第五十七条）",
+ advice:"改为不含比较级、最高级的主观表述",
+ terms:{"用过最好的":"用着挺顺手的","最好的":"挺满意的","最好":"挺满意","最佳":"比较合适","第一名":"表现突出","第一":"表现突出","国家级实验室":"专业实验室","国家级":"专业","最高级":"较高规格","顶级":"品质不错","全网最低价":"本次活动价","全网最低":"本次活动价","销量冠军":"销量不错","绝无仅有":"比较少见","史上最":"相当"}},
+
+{j:"cn",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"使用国家机关名义",
+ law:"《中华人民共和国广告法》第九条第一项、第二项",
+ pen:"责令停止发布，处二十万元以上一百万元以下罚款（第五十七条）",
+ advice:"删除涉及国家机关、国家工作人员的表述",
+ terms:{"国家机关推荐":"","政府指定":"","国家推荐":"","央视推荐":"","官方指定品牌":""}},
+
+{j:"cn",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"商业内容未标明广告",
+ law:"《互联网广告管理办法》第九条第三款；罚则依第二十五条转致《广告法》第五十九条第三款",
+ pen:"由市场监督管理部门责令改正，处十万元以下的罚款",
+ advice:"在正文开头显著标明「广告」",
+ cond:"commercial",
+ marker:["广告","赞助","品牌合作","推广"],
+ prepend:"【广告】"},
+
+{j:"cn",
+cat:"美妆护肤",
+lv:"amber",
+conf:"high",
+name:"特殊化妆品功效宣称",
+ law:"《化妆品监督管理条例》第十六条、第二十二条",
+ pen:"功效宣称应当有充分科学依据；特殊化妆品须经注册后方可生产进口",
+ advice:"核验品牌方是否持有特殊化妆品注册证及功效评价报告",
+ terms:{"美白":"","祛斑":"","防晒":"","防脱发":"","染发":"","烫发":""}},
+
+{j:"cn",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"疾病治疗功能宣称",
+ law:"《中华人民共和国广告法》第十七条",
+ pen:"广告费用三倍以上五倍以下罚款，情节严重可吊销营业执照（第五十八条）",
+ advice:"改为主观体感描述，不涉及疾病与疗效",
+ terms:{"完全不用去医院了":"日常护理够用了","不用去医院":"日常护理够用","根治敏感肌":"感觉肤况稳定了一些","根治":"改善一点","治愈":"有所好转","痊愈":"有所好转","痘印全消":"痘印看着淡了些","消炎":"舒缓","杀菌":"清洁","药效":"效果","替代药物":"日常护理","比吃药管用":"自己感觉还行"}},
+
+{j:"cn",
+cat:"食品饮料",
+lv:"red",
+conf:"high",
+name:"普通食品宣称疾病预防治疗",
+ law:"《中华人民共和国食品安全法》第七十三条",
+ pen:"食品广告不得涉及疾病预防、治疗功能；由市场监督管理部门依法处罚",
+ advice:"删除全部功能性与疾病相关表述",
+ terms:{"降血糖":"","降血压":"","降血脂":"","抗癌":"","防癌":"","治疗":"","调理肠胃":"","排毒":""}},
+
+{j:"cn",
+cat:"食品饮料",
+lv:"red",
+conf:"high",
+name:"婴儿乳制品替代母乳宣称",
+ law:"《中华人民共和国广告法》第二十条",
+ pen:"禁止在大众传播媒介发布声称全部或部分替代母乳的婴儿乳制品、饮料及其他食品广告",
+ advice:"删除与母乳比较的全部表述",
+ terms:{"替代母乳":"","接近母乳":"","等同母乳":"","堪比母乳":""}},
+
+{j:"cn",
+cat:"保健食品",
+lv:"red",
+conf:"high",
+name:"保健食品功效与安全性断言",
+ law:"《中华人民共和国广告法》第十八条",
+ pen:"不得含有表示功效、安全性的断言或者保证，不得涉及疾病预防治疗功能",
+ advice:"删除断言式表述，保留经注册备案的保健功能名称",
+ terms:{"无副作用":"","安全无毒":"","药到病除":"","根治":"","预防":"","彻底解决":"","三个月血糖稳稳降下来":"坚持吃了三个月"}},
+
+{j:"cn",
+cat:"保健食品",
+lv:"red",
+conf:"high",
+name:"保健食品未作法定声明",
+ law:"《中华人民共和国食品安全法》第七十九条",
+ pen:"保健食品广告应当声明「本品不能代替药物」",
+ advice:"在内容中加入「本品不能代替药物」",
+ cond:"cat",
+ marker:["本品不能代替药物"],
+ append:"本品不能代替药物。"},
+
+{j:"cn",
+cat:"保健食品",
+lv:"red",
+conf:"high",
+name:"保健食品利用代言人作推荐",
+ law:"《中华人民共和国广告法》第十八条第四项",
+ pen:"保健食品广告不得利用广告代言人作推荐、证明",
+ advice:"删除以医师、专家、消费者名义作推荐的内容",
+ terms:{"医生都说好":"","专家推荐":"","医师建议":"","营养师推荐":""}},
+
+{j:"cn",
+cat:"医疗美容",
+lv:"red",
+conf:"high",
+name:"医疗广告禁止性表现形式",
+ law:"《医疗广告管理办法》第七条",
+ pen:"责令限期改正并给予警告；情节严重的可责令停业整顿、吊销相关诊疗科目",
+ advice:"删除涉及诊疗方法、疗效保证与效果数据的全部表述",
+ terms:{"保证治愈":"","治愈率":"","有效率":"","包满意":"","零风险":"","无痛无恢复期":"","术后即刻见效":""}},
+
+{j:"cn",
+cat:"金融理财",
+lv:"red",
+conf:"high",
+name:"保本保收益承诺",
+ law:"《中华人民共和国广告法》第二十五条",
+ pen:"不得对未来效果、收益作保证性承诺，不得明示或暗示保本、无风险、保收益",
+ advice:"删除收益承诺，改为中性产品描述",
+ terms:{"保本保收益":"产品风险等级以合同约定为准","年化稳稳八个点":"历史年化收益以产品说明书为准","保本":"","保收益":"","稳赚不赔":"","稳赚":"","零风险":"","无风险":"","刚性兑付":"","躺赚":""}},
+
+{j:"cn",
+cat:"教育培训",
+lv:"red",
+conf:"high",
+name:"升学与考试保证性承诺",
+ law:"《中华人民共和国广告法》第二十四条第一项",
+ pen:"不得对升学、通过考试、获得学位学历作明示或暗示的保证性承诺",
+ advice:"删除承诺性表述，改为课程内容描述",
+ terms:{"保录取率百分之百":"表现不错","包过，不过退费":"课程完整覆盖考纲，提供课后答疑","包过":"系统梳理考点","保过":"系统梳理考点","不过退费":"提供课后答疑","保录取":"针对性备考","保offer":"针对性备考","保分":"分项训练","提分保证":"分项训练"}},
+
+{j:"cn",
+cat:"教育培训",
+lv:"red",
+conf:"high",
+name:"暗示考试机构人员参与",
+ law:"《中华人民共和国广告法》第二十四条第二项",
+ pen:"不得明示或暗示有相关考试机构或其工作人员、考试命题人员参与培训",
+ advice:"删除涉及命题、阅卷、内部资料的全部表述",
+ terms:{"命题组":"教研团队","阅卷老师":"资深讲师","内部资料":"课程讲义","押题":"考点精讲","原题":"历年真题"}},
+
+/* ================= 中国香港 ================= */
+
+{j:"hk",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"虛假商品說明",
+ law:"《商品說明條例》（第362章）第7條（貨品）、第7A條（服務）",
+ pen:"由香港海關執法；商品說明須在要項上屬虛假，涵蓋性能、用途適合性、成分等指明特徵",
+ advice:"刪除無法提供佐證的描述，改為主觀使用感受",
+ terms:{"用過最好嘅":"用落幾順手","最好嘅":"幾鍾意嘅","最好":"幾鍾意","全網最平":"今次優惠價","第一":"表現唔錯","保證":"","百分百":"","根治暗瘡":"暗瘡睇落淡咗","根治":"改善少少","醫治":"護理","治癒":"有好轉"}},
+
+{j:"hk",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"誤導性遺漏",
+ law:"《商品說明條例》（第362章）第13E條",
+ pen:"遺漏、隱藏重要資料，或未能表露其商業用意，因而導致消費者作出交易決定，即屬誤導性遺漏罪行",
+ advice:"在內容開首清楚披露贊助或商業合作關係",
+ cond:"commercial",
+ marker:["廣告","贊助","合作","推廣","广告","赞助"],
+ prepend:"【廣告】"},
+
+{j:"hk",
+cat:"通用",
+lv:"amber",
+conf:"high",
+name:"餌誘式廣告宣傳",
+ law:"《商品說明條例》（第362章）第13G條",
+ pen:"以某價格宣傳而無合理理由相信能按該價供應合理數量，構成餌誘式廣告",
+ advice:"核實庫存與供應量，並標明數量限制",
+ terms:{"名額只剩":"","限時搶購":"","最後三件":"","清倉價":""}},
+
+/* ================= 中国澳门 ================= */
+
+{j:"mo",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"廣告可識別性",
+ law:"第7/89/M號法律《廣告活動法》第五條；第七條第一款",
+ pen:"第七條第一款禁止以技巧、潛意識或掩飾方法使廣告對象無法了解信息性質；罰款責任見第三十條",
+ advice:"在內容中明確標示廣告或贊助性質",
+ cond:"commercial",
+ marker:["廣告","贊助","合作","Publicidade","#ad","广告"],
+ prepend:"【廣告】"},
+
+{j:"mo",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"隱藏或欺詐性廣告",
+ law:"第7/89/M號法律第七條第二款a項",
+ pen:"特別禁止有隱藏、間接或欺詐性質的廣告",
+ advice:"不得以偽裝成個人分享的方式掩飾商業目的",
+ terms:{"純分享，唔係廣告嚟㗎。":"","純分享":"","無利益相關":"","自來水":"","唔係廣告":"","不是广告":""}},
+
+{j:"mo",
+cat:"通用",
+lv:"amber",
+conf:"high",
+name:"說明須隨時可被證實",
+ law:"第7/89/M號法律第六條第二款",
+ pen:"關於來源、性質、成分、功能及購入條件的說明，應隨時可被證實",
+ advice:"備妥可供查核的檢測報告或依據文件",
+ terms:{"最好":"","第一":"","唯一":"","100%":"","最有效":""}},
+
+{j:"mo",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"對品質作錯誤引導",
+ law:"第7/89/M號法律第六條第一款；第七條第二款f項",
+ pen:"廣告信息應尊重真理，不歪曲事實或錯誤引導廣告對象",
+ advice:"刪除誇大與無依據的功效表述",
+ terms:{"根治":"改善","治癒":"有好轉","神效":"","立即見效":"","永久":""}},
+
+/* ================= 美国 ================= */
+
+{j:"us",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"未披露实质性关联",
+ law:"16 CFR §255.5（FTC Endorsement Guides, 2023 修订）；FTC Act §5",
+ pen:"FTC 执法：禁令与退款；曾收到 Notice of Penalty Offenses 的，可按 §5(m)(1)(B) 处民事罚款",
+ advice:"在正文开头加入 #ad 或 Paid partnership，须 clear and conspicuous",
+ cond:"commercial",
+ marker:["#ad","#sponsored","Advertisement","Paid partnership","#Ad","Sponsored"],
+ prepend:"#ad"},
+
+{j:"us",
+cat:"通用",
+lv:"amber",
+conf:"high",
+name:"披露位置不显著",
+ law:"16 CFR §255.0（clearly and conspicuously）；FTC Disclosures 101",
+ pen:"披露混入标签串或需展开才可见的，视为未有效披露",
+ advice:"把 #ad 前移至正文开头，不要与其他标签混排",
+ cond:"position",
+ marker:["#ad","#sponsored","Paid partnership"],
+ within:40,
+ prepend:"#ad"},
+
+{j:"us",
+cat:"通用",
+lv:"amber",
+conf:"high",
+name:"宣称缺乏合理依据",
+ law:"FTC Policy Statement Regarding Advertising Substantiation (1984)",
+ pen:"客观可验证的宣称须在发布前持有 reasonable basis",
+ advice:"提供试验数据或调查出处；无依据的应删除",
+ terms:{"clinically proven":"","#1":"","No.1":"","best-selling":"","scientifically proven":"","98% effective":""}},
+
+{j:"us",
+cat:"保健食品",
+lv:"red",
+conf:"high",
+name:"膳食补充剂疾病宣称",
+ law:"FD&C Act §403(r)(6)；FTC Health Products Compliance Guidance (2022)",
+ pen:"疾病治疗、预防、治愈类宣称一律禁止，产品可能被认定为未经批准的新药",
+ advice:"改为 structure/function 表述，不得出现疾病名称",
+ terms:{"literally cures diabetes":"supports healthy blood sugar levels","cures diabetes":"supports healthy blood sugar","cures":"supports","cure":"support","treats":"supports","prevents disease":"","heals":""}},
+
+{j:"us",
+cat:"保健食品",
+lv:"red",
+conf:"high",
+name:"补充剂缺少法定免责声明",
+ law:"21 CFR §101.93",
+ pen:"structure/function claim 须附 FDA 免责声明",
+ advice:"加入：This statement has not been evaluated by the Food and Drug Administration.",
+ cond:"cat",
+ marker:["not been evaluated by the Food and Drug Administration"],
+ append:"This statement has not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease."},
+
+{j:"us",
+cat:"通用",
+lv:"amber",
+conf:"high",
+name:"消费者评价真实性",
+ law:"16 CFR Part 465 §465.2（2024-10-21 生效）",
+ pen:"知情违反可处每次 $53,088 民事罚款（经通胀调整）",
+ advice:"核验评价是否为真实使用者所写，不得使用 AI 生成或未使用过产品的评价",
+ terms:{"verified reviews":"","thousands of 5-star":"","everyone loves":""}},
+
+/* ================= 欧盟 ================= */
+
+{j:"eu",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"隐藏广告",
+ law:"Directive 2005/29/EC (UCPD) Annex I 第 11 项；Art. 7(2)",
+ pen:"经 2019/2161 修订的 Art.13：跨境大范围违法罚款上限至少为年营业额 4%，或至少 200 万欧元",
+ advice:"在内容中明确标明商业性质",
+ cond:"commercial",
+ marker:["#ad","Werbung","Anzeige","publicité","Advertisement","sponsored"],
+ prepend:"#ad"},
+
+{j:"eu",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"笼统环境宣称",
+ law:"Directive (EU) 2024/825 新增 UCPD Annex I 第 4a、4c 项（2026-09-27 起适用）",
+ pen:"无公认卓越环境表现支持的笼统环境宣称、基于抵消的碳中和宣称列入黑名单",
+ advice:"删除笼统表述，或提供第三方认证依据",
+ terms:{"eco-friendly":"","climate neutral":"","carbon neutral":"","climate friendly":"","green":"","sustainable":""}},
+
+{j:"eu",
+cat:"食品饮料",
+lv:"red",
+conf:"high",
+name:"食品疾病宣称",
+ law:"Regulation (EU) 1169/2011 Art. 7(3)",
+ pen:"不得宣称食品可预防、治疗或治愈人类疾病",
+ advice:"删除全部疾病相关表述",
+ terms:{"prevents inflammation":"","prevents":"","treats":"","cures":"","detoxes":"","detox":""}},
+
+{j:"eu",
+cat:"食品饮料",
+lv:"red",
+conf:"high",
+name:"减重幅度与医生推荐",
+ law:"Regulation (EC) 1924/2006 Art. 12(b)、Art. 12(c)",
+ pen:"不得宣称减重速度或幅度，不得引用个别医生或医疗专业人员的推荐",
+ advice:"删除减重数字与医生背书",
+ terms:{"Lose 5kg in two weeks":"","lose 5kg":"","Doctors recommend it":"","doctor recommended":"","recommended by doctors":""}},
+
+{j:"eu",
+cat:"食品饮料",
+lv:"amber",
+conf:"high",
+name:"未授权健康声称",
+ law:"Regulation (EC) 1924/2006 Art. 10；授权清单见 Regulation (EU) 432/2012",
+ pen:"只能使用列入 Union Register 的授权健康声称",
+ advice:"核验该声称是否在 EU Register 中，并确认措辞与授权文本一致",
+ terms:{"boosts immunity":"","improves gut health":"","supports metabolism":""}},
+
+{j:"eu",
+cat:"美妆护肤",
+lv:"amber",
+conf:"high",
+name:"化妆品功效宣称依据",
+ law:"Regulation (EC) 1223/2009 Art. 20；Regulation (EU) 655/2013 共同标准",
+ pen:"功效宣称须真实、有证据支持、公平",
+ advice:"核验产品信息文件中的功效评价资料；防晒不得宣称完全防护",
+ terms:{"100% protection":"","sunblock":"","all-day protection":"","instant results":""}},
+
+/* ================= 马来西亚 ================= */
+
+{j:"my",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"网红未披露商业关系",
+ law:"Malaysian Communications and Multimedia Content Code 2022（第三版）Part 3",
+ pen:"Content Forum 投诉局最高罚 RM50,000",
+ advice:"使用 Ad / Advertisement / Paid Partnership；披露语言须与内容一致，视频须在画面内披露，直播须定期重复",
+ cond:"commercial",
+ marker:["Ad ","Advert","Advertising","Advertisement","Promotion","Paid Partnership","#ad"],
+ prepend:"Advertisement —"},
+
+{j:"my",
+cat:"通用",
+lv:"amber",
+conf:"high",
+name:"清真宣称须经认证",
+ law:"Trade Descriptions (Definition of Halal) Order 2011；(Certification and Marking of Halal) Order 2011",
+ pen:"未获认证使用清真标志：公司初犯最高 RM200,000，再犯 RM500,000；个人最高 RM100,000 或 3 年监禁",
+ advice:"核验 JAKIM 或州伊斯兰宗教理事会证书编号；仅这两类机构可认证清真",
+ terms:{"Halal":"","halal":"","HALAL":""}},
+
+{j:"my",
+cat:"保健食品",
+lv:"red",
+conf:"high",
+name:"保健产品广告未获 KKLIU 批准",
+ law:"Medicines (Advertisement and Sale) Act 1956；Medicine Advertisements Board 审批",
+ pen:"未经 MAB 批准发布医药、保健产品广告属违法，社交媒体帖子同样适用",
+ advice:"取得 KKLIU 编号并在内容中显示",
+ cond:"cat",
+ marker:["KKLIU"]},
+
+/* ================= 印度尼西亚 ================= */
+
+{j:"id",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"个人账号商业内容未声明",
+ law:"Etika Pariwara Indonesia 2020 Bab III.A 第 4.6.11(b) 项；第 4.6.3 项说明",
+ pen:"自律规范；隐藏广告可能同时构成 UU 8/1999 第 9 条或第 17 条意义上的误导",
+ advice:"事先明确说明含商业广告成分，advertorial 须标 #sponsor",
+ cond:"commercial",
+ marker:["#sponsor","iklan","Iklan","berbayar","#ad"],
+ prepend:"#sponsor"},
+
+{j:"id",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"误导性广告",
+ law:"UU No. 8 Tahun 1999 Pasal 17 ayat (1)；Pasal 9",
+ pen:"Pasal 62 ayat (1)：最高 5 年监禁或 Rp2 miliar 罚金",
+ advice:"删除夸大信息与虚假见证，披露使用风险",
+ terms:{"terbaik":"","nomor satu":"","dijamin":"","paling ampuh":""}},
+
+{j:"id",
+cat:"美妆护肤",
+lv:"red",
+conf:"high",
+name:"医务人员出演化妆品广告",
+ law:"Peraturan BPOM No. 18 Tahun 2024（BN 2024 No. 893）",
+ pen:"行政处罚：警告、暂停流通、召回、撤销通报、公布违规信息",
+ advice:"删除医生、护士等医务人员的出演与见证",
+ terms:{"dokter":"","Dokter":"","dokter kulit":"","perawat":"","tenaga medis":""}},
+
+{j:"id",
+cat:"美妆护肤",
+lv:"red",
+conf:"high",
+name:"化妆品宣称超出定义范围",
+ law:"Peraturan BPOM No. 18 Tahun 2024；技术要求见 Peraturan BPOM No. 3 Tahun 2022",
+ pen:"BPOM 曾以此撤销 14 款产品的流通许可（izin edar）",
+ advice:"删除超出化妆品定义的功效表述",
+ terms:{"pembesar payudara":"","mengobati":"","menyembuhkan":"","mengencangkan miss v":""}},
+
+{j:"id",
+cat:"食品饮料",
+lv:"amber",
+conf:"high",
+name:"清真认证义务（过渡期）",
+ law:"UU 33/2014；PP 42/2024，经 PP 40/2026 修订",
+ pen:"中大型企业食品饮料自 2024-10-18 已强制；微小企业食品、化妆品、保健补充剂等延至 2028-10-17；进口食品饮料自 2028-10-18",
+ advice:"核验 BPJPH 清真证书编号，并按产品类别确认适用期限",
+ terms:{"halal":"","Halal":""}},
+
+/* ================= 泰国 ================= */
+
+{j:"th",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"未披露商业关系",
+ law:"Consumer Protection Act B.E. 2522 (1979) 第 22 条",
+ pen:"广告委员会可依第 27 条命令修改、禁止或更正广告",
+ advice:"标注 #โฆษณา 或 Sponsored",
+ cond:"commercial",
+ marker:["โฆษณา","ได้รับการสนับสนุน","Sponsored","#ad"],
+ prepend:"#โฆษณา"},
+
+{j:"th",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"虚假或夸大广告",
+ law:"Consumer Protection Act B.E. 2522 第 22 条第 2 款；举证义务见第 28 条",
+ pen:"广告委员会可要求广告主举证；拿不出依据的可依第 27 条下令",
+ advice:"提供研究或认证文件，否则删除",
+ terms:{"ดีที่สุด":"","อันดับ 1":"","100%":"","ที่สุดในโลก":""}},
+
+{j:"th",
+cat:"食品饮料",
+lv:"red",
+conf:"high",
+name:"食品功效广告未获批准",
+ law:"Food Act B.E. 2522 第 41 条",
+ pen:"宣传食品品质功效须事先取得 อย.（Thai FDA）批准并显示 ฆอ. 编号；违反第 41 条最高 THB 5,000",
+ advice:"取得广告批准号并在内容中标明",
+ cond:"cat",
+ marker:["ฆอ.","ฆอ","อย."]},
+
+{j:"th",
+cat:"保健食品",
+lv:"red",
+conf:"high",
+name:"补充剂治病宣称",
+ law:"Food Act B.E. 2522 第 40 条",
+ pen:"最高 3 年监禁或 THB 30,000；FDA 可依第 42 条命令停播",
+ advice:"删除治疗、治愈、预防疾病类表述",
+ terms:{"รักษา":"","หายขาด":"","ป้องกันโรค":"","ลดเบาหวาน":""}},
+
+/* ================= 越南 ================= */
+
+{j:"vn",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"未在广告前及过程中告知",
+ law:"Luật Quảng cáo 16/2012/QH13，经 Law 75/2025/QH15 修订，Art. 15a(3)(b)；Art. 23(2)(đ)",
+ pen:"Decree 87/2026/ND-CP Art. 51：完全未告知罚 6,000–8,000 万越南盾；组织加倍",
+ advice:"在内容开头及过程中标明 Quảng cáo",
+ cond:"commercial",
+ marker:["Quảng cáo","quảng cáo","Hợp tác quảng cáo","#ad"],
+ prepend:"Quảng cáo —"},
+
+{j:"vn",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"绝对化与最高级用语",
+ law:"Luật Quảng cáo Art. 8 第 11 项；Circular 12/2026/TT-BVHTTDL（2026-07-05 生效）",
+ pen:"须在广告中写明证明文件的编号和日期，外语同类用语同样适用",
+ advice:"删除，或标注证明文件编号与日期",
+ terms:{"thực sự tốt nhất mình từng dùng":"mình dùng thấy hợp","tốt nhất":"","Sản phẩm số một thị trường":"Sản phẩm mình đang dùng","số một":"","số 1":"","duy nhất":"","hàng đầu":""}},
+
+{j:"vn",
+cat:"通用",
+lv:"amber",
+conf:"high",
+name:"推荐未亲自使用的产品",
+ law:"Luật Quảng cáo Art. 15a(3)(a)",
+ pen:"Decree 87/2026 Art. 51：推荐未使用或不了解的产品罚 8,000 万–1 亿越南盾",
+ advice:"保留样品签收记录与实际使用证明",
+ cond:"commercial",
+ marker:["đã sử dụng","trải nghiệm thực tế"]},
+
+{j:"vn",
+cat:"母婴",
+lv:"red",
+conf:"high",
+name:"母乳代用品广告",
+ law:"越南法律禁止对 24 个月以下儿童的母乳代用品做广告",
+ pen:"Decree 87/2026 Art. 49：5,000–7,000 万越南盾",
+ advice:"删除全部母乳代用品推广内容",
+ terms:{"thay thế sữa mẹ":"","sữa công thức":""}},
+
+/* ================= 日本 ================= */
+
+{j:"jp",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"ステルスマーケティング",
+ law:"景品表示法第 5 条第 3 号；令和 5 年内閣府告示第 19 号（2023-10-01 施行）",
+ pen:"措置命令（第 7 条）。ステマ不适用课征金。首例措置命令为 2024-06-07",
+ advice:"标注「PR」「広告」「宣伝」「プロモーション」",
+ cond:"commercial",
+ marker:["PR","広告","宣伝","プロモーション","提供を受けて"],
+ prepend:"【PR】"},
+
+{j:"jp",
+cat:"通用",
+lv:"amber",
+conf:"high",
+name:"標示が埋没している",
+ law:"ステルスマーケティング運用基準",
+ pen:"埋在大量标签中、放在长文末尾、字号过小的，不构成有效标示",
+ advice:"把「PR」前移到开头显著位置",
+ cond:"position",
+ marker:["PR","広告","プロモーション"],
+ within:30,
+ prepend:"【PR】"},
+
+{j:"jp",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"優良誤認表示",
+ law:"景品表示法第 5 条第 1 号",
+ pen:"课征金为对象商品销售额 3%（第 8 条）；2024-10-01 起 10 年内再犯加算 1.5 倍，并新设直罚最高 100 万日元",
+ advice:"删除断言式表述",
+ terms:{"完全に治るレベルです":"手放せません","完全に治る":"","絶対":"","必ず治る":"","誰でも":""}},
+
+{j:"jp",
+cat:"通用",
+lv:"amber",
+conf:"high",
+name:"No.1 表示の裏付け",
+ law:"景品表示法第 7 条第 2 項（不実証広告規制）",
+ pen:"消费者庁要求时须 15 日内提交合理依据，否则视为优良误认",
+ advice:"提供调查方法与样本说明；印象调查不足以支撑 No.1 表示",
+ terms:{"No.1":"","ナンバーワン":"","第1位":"","満足度No.1":""}},
+
+{j:"jp",
+cat:"美妆护肤",
+lv:"red",
+conf:"high",
+name:"化粧品の効能範囲逸脱",
+ law:"薬機法第 66 条第 1 項；医薬品等適正広告基準（化粧品の効能は 56 項目）",
+ pen:"第 85 条：2 年以下拘禁刑或 200 万日元以下罚金；课征金为对象期间销售额 4.5%",
+ advice:"限定在 56 项效能范围内；「美白」仅适用于获批的医薬部外品",
+ terms:{"シミが消える":"肌の調子が整う","アンチエイジング":"エイジングケア","細胞再生":"","シワが消える":"乾燥による小ジワを目立たなくする"}},
+
+{j:"jp",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"医師等による保証の暗示",
+ law:"薬機法第 66 条第 2 項",
+ pen:"使人误以为医师等专业人士保证效果的，视为违反第 1 项",
+ advice:"删除医师推荐与监修表述",
+ terms:{"医師推奨の処方":"こだわりの処方","医師推奨":"","医師が保証":"","ドクター監修":"","皮膚科医推奨":""}},
+
+{j:"jp",
+cat:"保健食品",
+lv:"red",
+conf:"high",
+name:"健康食品の薬効標榜",
+ law:"薬機法第 68 条；健康増進法第 65 条",
+ pen:"宣称治病即被视为无承认医药品的广告",
+ advice:"只有特定保健用食品或機能性表示食品可作功能宣称，须有许可或申报号",
+ terms:{"血糖値が下がる":"","がん予防":"","痩せる":"","病気が治る":""}},
+
+/* ================= 韩国 ================= */
+
+{j:"kr",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"경제적 이해관계 미표시",
+ law:"표시·광고의 공정화에 관한 법률 제 3 조 제 1 항 제 2 호；추천·보증 심사지침 V.5",
+ pen:"제 9 조 과징금：相关销售额 2% 以内，最高 5 억원；제 17 조：2 年以下有期徒刑或 1.5 억원以下罚金",
+ advice:"标注「광고」「협찬」「제품 제공」；模糊用语不再被接受",
+ cond:"commercial",
+ marker:["광고","협찬","제품 제공","유료 광고"],
+ prepend:"[광고]"},
+
+{j:"kr",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"표시 위치 부적합",
+ law:"추천·보증 등에 관한 표시·광고 심사지침 V.5（2024-12-01 시행）",
+ pen:"文字类媒体须置于标题或开头；放在末尾、评论或「더보기」之后无效",
+ advice:"把「광고」移到标题或正文开头，字号须大于正文或颜色不同",
+ cond:"position",
+ marker:["광고","협찬","유료 광고"],
+ within:20,
+ prepend:"[광고]"},
+
+{j:"kr",
+cat:"通用",
+lv:"red",
+conf:"high",
+name:"거짓·과장 광고",
+ law:"표시·광고의 공정화에 관한 법률 제 3 조 제 1 항 제 1 호；举证责任见 제 5 조",
+ pen:"시정조치（제 7 조）、과징금（제 9 조）、형사처벌（제 17 조）",
+ advice:"须能证明广告中与事实相关的内容",
+ terms:{"진짜 최고예요":"진짜 마음에 들어요","최고":"마음에 들어요","1위":"","유일":"","100%":"","완벽":""}},
+
+{j:"kr",
+cat:"美妆护肤",
+lv:"red",
+conf:"high",
+name:"화장품의 의약품 오인 표현",
+ law:"화장품법 제 13 조 제 1 항 제 1 호；施行规则 제 22 조 및 별표 5",
+ pen:"제 24 조：相关品目广告业务停止 2–3 个月",
+ advice:"删除再生、治疗类表述",
+ terms:{"아토피까지 치료되고":"피부가 편안해지고","세포재생 효과가 1위입니다":"사용감이 좋습니다","세포재생":"","재생":"","아토피":"","치료":"","여드름 치료":""}},
+
+{j:"kr",
+cat:"美妆护肤",
+lv:"amber",
+conf:"high",
+name:"기능성화장품 심사 여부",
+ law:"화장품법 제 13 조 제 1 항 제 2 호；제 4 조",
+ pen:"把非机能性化妆品说成机能性化妆品，或与审查结果不符的，处广告业务停止",
+ advice:"核验机能性化妆品审查或报告编号",
+ terms:{"미백":"","주름개선":"","자외선차단":""}}
+];
+
+/* ============ 示例内容 ============ */
+const SAMPLES = [
+ {t:"澳门 · 美容", s:"美妆护肤", j:"mo", c:true, d:"呢支精華真係全澳最好，用咗兩星期就根治暗瘡，立即見效，100%無添加。純分享，唔係廣告嚟㗎。連結喺下面！"},
+ {t:"美国 · 补充剂", s:"保健食品", j:"us", c:true, d:"I've been taking these capsules for 3 months and my blood sugar is finally stable. This stuff literally cures diabetes. Clinically proven 98% effective, the No.1 supplement in America. Link in bio!"},
+ {t:"欧盟 · 功能饮料", s:"食品饮料", j:"eu", c:true, d:"This drink is 100% eco-friendly and climate neutral. It detoxes your liver and prevents inflammation. Doctors recommend it. Lose 5kg in two weeks with one bottle a day. Link below!"},
+ {t:"日本 · 美容", s:"美妆护肤", j:"jp", c:true, d:"このクリーム、本当にシミが消えるんです。医師推奨の処方で満足度No.1、もう完全に治るレベルです。リンクはプロフィールから！ #スキンケア #美容 #PR"},
+ {t:"韩国 · 美容", s:"美妆护肤", j:"kr", c:true, d:"이 앰플 진짜 최고예요. 아토피까지 치료되고 세포재생 효과가 1위입니다. 미백 효과도 확실해요. 링크는 프로필에! #뷰티 #스킨케어 #광고"},
+ {t:"越南 · 美容", s:"美妆护肤", j:"vn", c:true, d:"Serum này thực sự tốt nhất mình từng dùng, bác sĩ da liễu cũng khuyên dùng. Sản phẩm số một thị trường. Link ở dưới nhé!"},
+ {t:"美妆推荐", s:"美妆护肤", j:"cn", c:true, d:"刷到这篇你就赚了！这款精华真的是我用过最好的，国家级实验室研发，美白效果第一名！我烂脸三年，用了两周痘印全消，根治敏感肌，完全不用去医院了。链接在下面，全网最低价，冲！"},
+ {t:"保健食品", s:"保健食品", j:"cn", c:true, d:"家里长辈每天两粒，三个月血糖稳稳降下来，医生都说好。这款胶囊无副作用，安全无毒，有效率高达百分之九十八，还能增强免疫力、改善睡眠，我妈说比吃药管用。链接放评论区了。"},
+ {t:"金融理财", s:"金融理财", j:"cn", c:true, d:"这个产品我已经跟了半年，保本保收益，年化稳稳八个点，零风险躺赚。内幕消息，带你上车，手把手教你操作，不懂的私我。"},
+ {t:"教育培训", s:"教育培训", j:"cn", c:true, d:"名师押题班，包过，不过退费。阅卷老师亲自划重点，去年学员保录取率百分之百，内部资料不外传，名额只剩三个，手慢无。"},
+ {t:"香港美妝（粵語）", s:"美妆护肤", j:"hk", c:true, d:"呢支精華真係我用過最好嘅，用咗兩個星期就根治暗瘡，連醫生都唔使睇。全網最平，名額只剩幾支，連結喺下面。"}
+];
+
+/* 法定声明、免责文本本身含有禁用词，须先划为保护区，否则补标后反被自己的规则命中 */
+const SAFE = {
+  cn:["本品不能代替药物","投资有风险，入市需谨慎"],
+  us:["This statement has not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease."],
+  vn:["Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh."]
+};
+
+/* ============ 状态 ============ */
+let JX = "cn";
+let hits = [], conds = [], userRules = [];
+let stats = {total:0, red:0, amber:0, byRule:{}, queue:[], seq:4820};
+
+const $ = id => document.getElementById(id);
+const allRules = () => RULES.concat(userRules);
+
+const JNAME = {cn:"中国内地",hk:"中国香港",mo:"中国澳门",us:"美国",eu:"欧盟",
+  my:"马来西亚",id:"印度尼西亚",th:"泰国",vn:"越南",jp:"日本",kr:"韩国"};
+
+const CONFTXT = {high:["依据已核","high"], mid:["依据待核","mid"], check:["条款号待核","check"]};
+/* 本版规则库仅收录已核对官方文本的条款；未能核实条款号的一律不收录 */
+function confTag(r){
+  const c = CONFTXT[r.conf] || CONFTXT.mid;
+  return '<span class="conf '+c[1]+'">'+c[0]+'</span>';
+}
+
+const JNOTE = {
+  cn:"《广告法》《互联网广告管理办法》《食品安全法》《化妆品监督管理条例》等",
+  hk:"《商品說明條例》Cap.362、《不良廣告（醫藥）條例》Cap.231 等",
+  mo:"第7/89/M號法律《廣告活動法》、第30/95/M號法令 — 注意：將於 2027-01-01 被第7/2026號法律《廣告法》取代",
+  us:"FTC Endorsement Guides (16 CFR 255)、Consumer Reviews Rule (16 CFR 465)、FD&C Act",
+  eu:"UCPD 2005/29/EC、Reg. 1924/2006、Reg. 1223/2009、Dir. (EU) 2024/825",
+  my:"Content Code 2022、Trade Descriptions Act 2011、Medicines (Advertisement and Sale) Act 1956",
+  id:"UU 8/1999、Etika Pariwara Indonesia 2020、Perbpom 18/2024、UU 33/2014",
+  th:"Consumer Protection Act B.E. 2522、Food Act B.E. 2522",
+  vn:"Luật Quảng cáo（Law 75/2025/QH15 修订）、Decree 87/2026/ND-CP",
+  jp:"景品表示法、ステマ告示（令和5年内閣府告示第19号）、薬機法",
+  kr:"표시광고법、추천·보증 심사지침（2024-12-01）、화장품법、의료법"
+};
+
+/* ============ 检测 ============ */
+function applicable(){
+  const cat = $("cat").value;
+  return allRules().filter(r => r.j===JX && (r.cat==="通用" || r.cat===cat));
+}
+
+function detect(text){
+  const rules = applicable();
+  const units = [];
+  rules.forEach(r => {
+    if(!r.terms) return;
+    Object.keys(r.terms).forEach(t => units.push({t, r}));
+  });
+  units.sort((a,b)=> b.t.length - a.t.length);
+
+  const out = [];
+  const taken = new Array(text.length).fill(false);
+  (SAFE[JX] || []).forEach(phrase => {
+    let from = 0, i;
+    while((i = text.indexOf(phrase, from)) !== -1){
+      for(let k = i; k < i + phrase.length; k++) taken[k] = true;
+      from = i + phrase.length;
+    }
+  });
+  units.forEach(u => {
+    let from = 0, i;
+    while((i = text.indexOf(u.t, from)) !== -1){
+      let free = true;
+      for(let k=i;k<i+u.t.length;k++) if(taken[k]) {free=false;break;}
+      if(free){
+        for(let k=i;k<i+u.t.length;k++) taken[k]=true;
+        out.push({start:i, len:u.t.length, term:u.t, rule:u.r});
+      }
+      from = i + u.t.length;
+    }
+  });
+  out.sort((a,b)=> a.start - b.start);
+
+  const cn = [];
+  const cat = $("cat").value;
+  const commercial = $("commercial").getAttribute("aria-checked")==="true";
+  rules.forEach(r => {
+    if(!r.cond) return;
+    const idx = markerHits(text, r.marker);
+    if(r.cond === "position"){
+      // 标识存在，但出现位置过于靠后：视为披露不显著
+      if(!commercial) return;
+      if(idx.length && Math.min.apply(null, idx) > (r.within || 40)) cn.push(r);
+      return;
+    }
+    if(r.cond === "commercial" && !commercial) return;
+    if(r.cond === "cat" && r.cat !== cat) return;
+    if(!idx.length) cn.push(r);
+  });
+  return {hits:out, conds:cn};
+}
+
+/* 否定语境下的标识不构成披露：「这不是广告」里的「广告」不能算已标注 */
+const NEG = ["唔係","唔系","不是","並非","并非","非","没有","沒有","not ","isn't","no "];
+function markerHits(text, markers){
+  const out = [];
+  (markers || []).forEach(m => {
+    let from = 0, i;
+    while((i = text.indexOf(m, from)) !== -1){
+      const lead = text.slice(Math.max(0, i - 6), i);
+      if(!NEG.some(n => lead.indexOf(n) !== -1)) out.push(i);
+      from = i + m.length;
+    }
+  });
+  return out;
+}
+
+/* ============ 渲染 ============ */
+function render(){
+  const text = $("draft").value;
+  $("verdict").hidden = false;
+  $("verdict").classList.remove("reveal");
+  void $("verdict").offsetWidth;
+  $("verdict").classList.add("reveal");
+
+  const nred = hits.filter(h=>h.rule.lv==="red").length + conds.filter(c=>c.lv==="red").length;
+  const namber = hits.filter(h=>h.rule.lv==="amber").length + conds.filter(c=>c.lv==="amber").length;
+  $("nred").textContent = nred;
+  $("namber").textContent = namber;
+  $("clear").hidden = nred !== 0;
+  $("vtitle").textContent = nred ? "这篇内容存在发布风险" : (namber ? "红线已清，尚有事项待人工复核" : "未发现规则命中");
+  $("fix").disabled = nred === 0;
+
+  // 正文批注
+  const body = $("docbody");
+  body.innerHTML = "";
+  if(!text.trim()){ body.innerHTML = '<span style="color:var(--ink3);font-family:var(--sans);font-size:15px">正文是空的，先写点什么再预审。</span>'; }
+  let pos = 0;
+  hits.forEach((h,i) => {
+    body.appendChild(document.createTextNode(text.slice(pos, h.start)));
+    const b = document.createElement("button");
+    b.className = "mk " + (h.rule.lv==="red"?"r":"a");
+    b.dataset.i = i;
+    b.innerHTML = esc(h.term) + "<sup>"+(i+1)+"</sup>";
+    b.addEventListener("click", ()=> focusNote(i));
+    body.appendChild(b);
+    pos = h.start + h.len;
+  });
+  body.appendChild(document.createTextNode(text.slice(pos)));
+
+  // 批注栏
+  const notes = $("notes");
+  notes.innerHTML = "";
+  if(!hits.length){
+    notes.innerHTML = '<p class="empty">正文中没有命中逐词规则。下方的条件提示仍需留意。</p>';
+  }
+  hits.forEach((h,i)=>{
+    const d = document.createElement("div");
+    d.className = "note " + (h.rule.lv==="red"?"r":"a");
+    d.dataset.i = i;
+    d.innerHTML =
+      '<div class="nhead"><span class="nnum">'+(i+1)+'</span>'+esc(h.rule.name)+confTag(h.rule)+'</div>'+
+      '<dl class="nrow"><dt>依据</dt><dd class="law">'+esc(h.rule.law)+'</dd></dl>'+
+      '<dl class="nrow"><dt>风险</dt><dd>'+esc(h.rule.pen)+'</dd></dl>'+
+      '<dl class="nrow"><dt>建议</dt><dd>'+esc(h.rule.advice)+(h.rule.lv==="amber"?'　<span style="color:var(--amber)">已生成复核工单</span>':'')+'</dd></dl>';
+    d.addEventListener("click", ()=> focusNote(i));
+    notes.appendChild(d);
+  });
+
+  // 条件提示
+  const cbox = $("conds");
+  cbox.innerHTML = "";
+  conds.forEach(c=>{
+    const d = document.createElement("div");
+    d.className = "cond " + (c.lv==="red"?"r":"a");
+    d.innerHTML = '<b>'+esc(c.name)+'</b>'+confTag(c)+'　'+esc(c.advice)+'<span class="law">'+esc(c.law)+'</span>';
+    cbox.appendChild(d);
+  });
+}
+
+function focusNote(i){
+  document.querySelectorAll(".mk.on").forEach(e=>e.classList.remove("on"));
+  document.querySelectorAll(".note.on").forEach(e=>e.classList.remove("on"));
+  const m = document.querySelector('.mk[data-i="'+i+'"]');
+  const n = document.querySelector('.note[data-i="'+i+'"]');
+  if(m) m.classList.add("on");
+  if(n){ n.classList.add("on"); n.scrollIntoView({block:"nearest", behavior:"smooth"}); }
+}
+
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+/* ============ 统计 ============ */
+function record(){
+  stats.total++;
+  stats.red += hits.filter(h=>h.rule.lv==="red").length + conds.filter(c=>c.lv==="red").length;
+  const ambers = hits.filter(h=>h.rule.lv==="amber").concat(conds.filter(c=>c.lv==="amber").map(c=>({rule:c})));
+  stats.amber += ambers.length;
+  hits.forEach(h=> stats.byRule[h.rule.name] = (stats.byRule[h.rule.name]||0)+1);
+  conds.forEach(c=> stats.byRule[c.name] = (stats.byRule[c.name]||0)+1);
+  const snippet = $("draft").value.trim().slice(0,16);
+  ambers.forEach(a=>{
+    stats.queue.unshift({
+      id:"WD-2026-"+(++stats.seq),
+      body: snippet || "（无正文）",
+      rule: a.rule.name,
+      time: stamp(),
+      state:"wait"
+    });
+  });
+  paintBoard();
+}
+
+function stamp(){
+  const d = new Date(), p = n => String(n).padStart(2,"0");
+  return p(d.getMonth()+1)+"-"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes());
+}
+
+function paintBoard(){
+  $("s-total").textContent = stats.total;
+  $("s-red").textContent = stats.red;
+  $("s-amber").textContent = stats.amber;
+  const tot = stats.red + stats.amber;
+  $("s-auto").textContent = tot ? Math.round(stats.red/tot*100)+"%" : "—";
+
+  const entries = Object.entries(stats.byRule).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const bars = $("bars");
+  if(!entries.length){
+    bars.innerHTML = '<p class="empty">还没有数据。回到预审跑一篇内容，这里会记录每条规则被触发的次数。</p>';
+  } else {
+    const max = entries[0][1];
+    bars.innerHTML = entries.map(([k,v])=>
+      '<div class="bar"><div><em>'+esc(k)+'</em><i><span style="width:'+(v/max*100)+'%"></span></i></div><b>'+v+'</b></div>'
+    ).join("");
+  }
+
+  const q = $("queue");
+  if(!stats.queue.length){
+    q.innerHTML = '<p class="empty">队列是空的。标黄的事项会自动进入这里，等待法务判断。</p>';
+  } else {
+    q.innerHTML = stats.queue.slice(0,8).map((t,i)=>
+      '<div class="tk"><div class="tkh"><span class="tkid">'+t.id+'</span>'+
+      '<span class="tag '+t.state+'">'+({wait:"待复核",pass:"已通过",deny:"已驳回"}[t.state])+'</span></div>'+
+      '<div class="tkb">'+esc(t.body)+'</div>'+
+      '<div class="tkf"><span>'+esc(t.rule)+'　'+t.time+'</span>'+
+      '<div><button class="mini" data-q="'+i+'" data-s="pass">通过</button>'+
+      '<button class="mini" data-q="'+i+'" data-s="deny">驳回</button></div></div></div>'
+    ).join("");
+    q.querySelectorAll(".mini").forEach(b=> b.addEventListener("click", ()=>{
+      stats.queue[+b.dataset.q].state = b.dataset.s; paintBoard();
+    }));
+  }
+}
+
+/* ============ 规则库视图 ============ */
+function paintRules(){
+  const list = allRules().filter(r=>r.j===JX);
+  $("rtitle").textContent = JNAME[JX] + "规则集";
+  $("rcount").textContent = list.length + " 条规则 · 红线 " +
+    list.filter(r=>r.lv==="red").length + " 条 · 人工复核 " + list.filter(r=>r.lv==="amber").length +
+    " 条 · 全部已核对官方文本";
+  $("rlist").innerHTML = list.map(r=>
+    '<div class="rule '+(r.lv==="red"?"r":"a")+'">'+
+      '<div class="rh"><h3>'+esc(r.name)+'</h3>'+
+      '<span class="lv">'+(r.lv==="red"?"红线":"人工复核")+'</span>'+confTag(r)+
+      '<span class="cat">'+esc(r.cat)+'</span></div>'+
+      (r.terms ? '<dl class="rr"><dt>匹配词</dt><dd>'+esc(Object.keys(r.terms).join("、"))+'</dd></dl>'
+               : '<dl class="rr"><dt>触发</dt><dd>'+(r.cond==="commercial"?"内容含购物链接或品牌合作，且未见标识":"品类为「"+esc(r.cat)+"」，且未见法定声明")+'</dd></dl>')+
+      '<dl class="rr"><dt>依据</dt><dd class="law">'+esc(r.law)+'</dd></dl>'+
+      '<dl class="rr"><dt>风险</dt><dd>'+esc(r.pen)+'</dd></dl>'+
+      '<dl class="rr"><dt>建议</dt><dd>'+esc(r.advice)+'</dd></dl>'+
+    '</div>').join("");
+}
+
+/* ============ 交互 ============ */
+CATS.forEach(c=>{ const o=document.createElement("option"); o.value=c; o.textContent=c; $("cat").appendChild(o); });
+$("cat").value = "美妆护肤";
+
+$("samples").innerHTML = SAMPLES.map((s,i)=>
+  '<button data-s="'+i+'">'+esc(s.t)+'<small>'+esc(s.s)+' · '+(s.j==="cn"?"中国内地":"中国香港")+'</small></button>').join("");
+$("samples").querySelectorAll("button").forEach(b=> b.addEventListener("click", ()=>{
+  const s = SAMPLES[+b.dataset.s];
+  setJ(s.j);
+  $("draft").value = s.d;
+  $("cat").value = s.s;
+  $("commercial").setAttribute("aria-checked", String(s.c));
+  $("verdict").hidden = true;
+  $("fix").disabled = true;
+}));
+
+document.querySelectorAll("nav button").forEach(b=> b.addEventListener("click", ()=>{
+  document.querySelectorAll("nav button").forEach(x=> x.setAttribute("aria-current", String(x===b)));
+  ["review","board","rules"].forEach(v=> $("view-"+v).hidden = (v !== b.dataset.view));
+  if(b.dataset.view==="rules") paintRules();
+}));
+
+function setJ(j){
+  JX = j;
+  $("seg").value = j;
+  $("jnote").textContent = JNOTE[j] || "";
+  paintRules();
+}
+$("seg").addEventListener("change", function(){
+  setJ(this.value);
+  if(!$("verdict").hidden && $("draft").value.trim()){ const r = detect($("draft").value); hits=r.hits; conds=r.conds; render(); }
+});
+
+$("commercial").addEventListener("click", function(){
+  this.setAttribute("aria-checked", this.getAttribute("aria-checked")==="true" ? "false" : "true");
+});
+
+$("run").addEventListener("click", ()=>{
+  const t = $("draft").value;
+  if(!t.trim()){ $("draft").focus(); return; }
+  const r = detect(t); hits = r.hits; conds = r.conds;
+  render(); record();
+});
+
+$("fix").addEventListener("click", ()=>{
+  let t = $("draft").value;
+  const reds = hits.filter(h=>h.rule.lv==="red").sort((a,b)=> b.start - a.start);
+  reds.forEach(h=>{
+    const rep = h.rule.terms[h.term];
+    t = t.slice(0, h.start) + (rep === "" ? "" : rep) + t.slice(h.start + h.len);
+  });
+  conds.filter(c => c.lv==="red" || c.cond==="position").forEach(c=>{
+    if(c.prepend) t = c.prepend + " " + t;
+    if(c.append) t = t.replace(/\s*$/, "") + " " + c.append;
+  });
+  t = t.replace(/[，,]\s*[，,]/g, "，").replace(/，\s*。/g, "。").replace(/。\s*。/g, "。").replace(/\s{2,}/g," ").trim();
+  $("draft").value = t;
+  const r = detect(t); hits = r.hits; conds = r.conds;
+  render();
+});
+
+$("reset").addEventListener("click", ()=>{
+  $("draft").value = ""; $("verdict").hidden = true; $("fix").disabled = true; $("draft").focus();
+});
+
+$("seed").addEventListener("click", function(){
+  const seeds = [
+    ["美白精华测评分享","特殊化妆品功效宣称"],
+    ["抗糖饮每日打卡","保健功能宣称超出注册范围"],
+    ["轻医美面诊记录","医疗广告未经审查"],
+    ["儿童面霜回购","儿童化妆品适用人群宣称"]
+  ];
+  seeds.forEach(([b,r],i)=> stats.queue.push({id:"WD-2026-"+(4800+i), body:b, rule:r, time:"10-31 1"+(2+i)+":0"+i, state: i===2?"pass":"wait"}));
+  stats.total += 127; stats.red += 43; stats.amber += 18;
+  Object.assign(stats.byRule, {"绝对化用语":38,"疾病治疗功能宣称":24,"商业内容未标明广告":19,"特殊化妆品功效宣称":12,"保健食品功效与安全性断言":7});
+  this.disabled = true; this.textContent = "示例数据已载入";
+  paintBoard();
+});
+
+$("toggleAdd").addEventListener("click", ()=>{ $("addForm").hidden = !$("addForm").hidden; });
+$("cancelAdd").addEventListener("click", ()=>{ $("addForm").hidden = true; });
+$("addForm").addEventListener("submit", e=>{
+  e.preventDefault();
+  const name = $("f-name").value.trim();
+  const terms = $("f-terms").value.split(/[，,、]/).map(s=>s.trim()).filter(Boolean);
+  if(!name || !terms.length) return;
+  const map = {}; terms.forEach(t=> map[t] = "");
+  userRules.push({j:JX, cat:"通用", lv:$("f-level").value, conf:"check", name,
+    law:$("f-law").value.trim() || "（待补充）",
+    pen:$("f-pen").value.trim() || "（待补充）",
+    advice:$("f-advice").value.trim() || "（待补充）", terms:map});
+  ["f-name","f-terms","f-law","f-pen","f-advice"].forEach(i=> $(i).value="");
+  $("addForm").hidden = true;
+  paintRules();
+});
+
+setJ("cn");
+paintBoard();
+</script>
+</body>
+</html>
